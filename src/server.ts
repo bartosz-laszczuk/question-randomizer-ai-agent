@@ -13,6 +13,10 @@ import logger from './utils/logger.js';
 import { requestLogger } from './api/middleware/request-logger.js';
 import { errorHandler, notFoundHandler } from './api/middleware/error-handler.js';
 import healthRoutes from './api/routes/health.routes.js';
+import agentRoutes from './api/routes/agent.routes.js';
+import { startAgentWorker, stopAgentWorker } from './queue/workers/agent-worker.js';
+import { closeQueue } from './queue/task-queue.js';
+import { closeRedisConnection } from './config/redis.config.js';
 
 /**
  * Create and configure Express application
@@ -42,6 +46,7 @@ function createApp(): Application {
 
   // Routes
   app.use(healthRoutes);
+  app.use(agentRoutes);
 
   // 404 handler (must be after all routes)
   app.use(notFoundHandler);
@@ -73,20 +78,39 @@ async function startServer(): Promise<void> {
       logger.info('✅ Question Randomizer AI Agent Service is ready!');
     });
 
+    // Start agent worker for queue processing
+    startAgentWorker();
+    logger.info('🔄 Agent worker started');
+
     // Graceful shutdown
     const shutdown = async (signal: string) => {
       logger.info(`${signal} received, shutting down gracefully...`);
 
-      server.close(() => {
-        logger.info('HTTP server closed');
-        process.exit(0);
-      });
+      // Close connections in order
+      try {
+        // Stop accepting new requests
+        server.close(() => {
+          logger.info('HTTP server closed');
+        });
 
-      // Force shutdown after 10 seconds
-      setTimeout(() => {
-        logger.error('Forced shutdown after timeout');
+        // Stop worker from accepting new jobs
+        await stopAgentWorker();
+        logger.info('Agent worker stopped');
+
+        // Close queue connections
+        await closeQueue();
+        logger.info('Queue connections closed');
+
+        // Close Redis connection
+        await closeRedisConnection();
+        logger.info('Redis connection closed');
+
+        logger.info('Graceful shutdown complete');
+        process.exit(0);
+      } catch (error) {
+        logger.error({ err: error }, 'Error during shutdown');
         process.exit(1);
-      }, 10000);
+      }
     };
 
     // Handle shutdown signals

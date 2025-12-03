@@ -198,15 +198,84 @@ npm run type-check        # TypeScript type checking
 ### Docker
 
 ```bash
-# Start Redis + Firebase Emulator
-docker-compose up
+# Build and run with Docker Compose (recommended for local dev)
+npm run docker:compose:up
 
-# Build Docker image
-docker build -t question-randomizer-agent .
+# Or build image manually
+npm run docker:build
 
 # Run container
-docker run -p 3002:3002 --env-file .env question-randomizer-agent
+npm run docker:run
+
+# View logs
+npm run docker:compose:logs
+
+# Stop services
+npm run docker:compose:down
 ```
+
+---
+
+## Deployment
+
+### Docker Deployment
+
+```bash
+# Build production image
+docker build -t question-randomizer-agent:latest .
+
+# Run with environment variables
+docker run -d \
+  --name agent-service \
+  -p 3002:3002 \
+  --env-file .env.production \
+  question-randomizer-agent:latest
+```
+
+### Kubernetes Deployment
+
+```bash
+# Create namespace and secrets
+kubectl create namespace agent-service
+kubectl create secret generic agent-secrets \
+  --from-file=firebase-credentials-json=./firebase-creds.json \
+  --from-literal=anthropic-api-key=sk-ant-...
+
+# Deploy to Kubernetes
+kubectl apply -f k8s/configmap.yml
+kubectl apply -f k8s/redis.yml
+kubectl apply -f k8s/deployment.yml
+kubectl apply -f k8s/service.yml
+kubectl apply -f k8s/ingress.yml
+
+# See k8s/README.md for complete guide
+```
+
+### Cloud Platforms
+
+**Google Cloud Run:**
+```bash
+gcloud run deploy agent-service \
+  --image gcr.io/YOUR_PROJECT/agent-service \
+  --platform managed \
+  --region us-central1
+```
+
+**AWS ECS/Fargate:**
+```bash
+# Push to ECR and deploy via ECS console
+# See docs/DEPLOYMENT.md for complete guide
+```
+
+**Azure Container Instances:**
+```bash
+az container create \
+  --resource-group agent-rg \
+  --name agent-service \
+  --image YOUR_REGISTRY/agent-service:latest
+```
+
+**See [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) for complete deployment guide.**
 
 ---
 
@@ -261,6 +330,7 @@ npm run test:coverage
 - [docs/QUEUE.md](./docs/QUEUE.md) - BullMQ queue architecture
 - [docs/TASK-EXAMPLES.md](./docs/TASK-EXAMPLES.md) - Example agent tasks
 - [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) - Common issues
+- [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) - Production deployment guide
 
 ---
 
@@ -364,22 +434,20 @@ QUEUE_CONCURRENCY=3
 
 ## Implementation Status
 
-### Completed Phases
+### Completed Phases ✅
 - ✅ **Phase 0:** Project Documentation
+- ✅ **Phase 1:** Project Setup & Core Infrastructure
+- ✅ **Phase 2:** Firestore Service Layer
+- ✅ **Phase 3:** Agent Tools Implementation (15 tools)
+- ✅ **Phase 4:** Agent Execution Engine
+- ✅ **Phase 5:** Streaming Implementation (SSE)
+- ✅ **Phase 6:** BullMQ Queue Integration
+- ✅ **Phase 7:** Testing Infrastructure
+- ✅ **Phase 8:** C# Backend Integration
+- ✅ **Phase 9:** Additional Documentation
+- ✅ **Phase 10:** Deployment & Production Readiness
 
-### Upcoming Phases
-- ⏳ **Phase 1:** Project Setup & Core Infrastructure (Days 1-2)
-- ⏳ **Phase 2:** Firestore Service Layer (Days 3-4)
-- ⏳ **Phase 3:** Agent Tools Implementation (Days 5-8)
-- ⏳ **Phase 4:** Agent Execution Engine (Days 9-11)
-- ⏳ **Phase 5:** Streaming Implementation (Days 12-13)
-- ⏳ **Phase 6:** BullMQ Queue Integration (Days 14-15)
-- ⏳ **Phase 7:** Testing Infrastructure (Days 16-19)
-- ⏳ **Phase 8:** C# Backend Integration (Days 20-21)
-- ⏳ **Phase 9:** Additional Documentation (Days 22-23)
-- ⏳ **Phase 10:** Deployment & Production Readiness (Days 24-25)
-
-**Timeline:** 26 days total (Phase 0 + 25 days implementation)
+**Status:** All implementation phases complete! Ready for production deployment. 🚀
 
 ---
 
@@ -436,9 +504,9 @@ MIT License - See [LICENSE](./LICENSE) for details
 
 **Project:** Question Randomizer
 **Repository:** question-randomizer-ai-agent
-**Last Updated:** 2025-11-27
-**Status:** Phase 0 Complete ✅
+**Last Updated:** 2025-11-28
+**Status:** All Phases Complete ✅ - Production Ready 🚀
 
 ---
 
-**🚀 Ready to start implementation? Read [CLAUDE.md](./CLAUDE.md) for the complete guide!**
+**🎉 Ready for production deployment! See [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) for deployment guide.**

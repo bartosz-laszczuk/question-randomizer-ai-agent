@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm test:*)",
+      "Bash(mkdir:*)",
+      "Bash(if [ ! -d \"C:\\D\\Repositories\\question-randomizer-ai-agent\\.github\\workflows\" ])",
+      "Bash(then mkdir -p \"C:\\D\\Repositories\\question-randomizer-ai-agent\\.github\\workflows\")",
+      "Bash(fi)",
+      "Bash(npm audit:*)",
+      "Bash(npm run lint)",
+      "Bash(docker build:*)",
+      "Bash(dotnet build:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

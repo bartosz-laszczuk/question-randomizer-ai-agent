@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-config
+  labels:
+    app: agent-service
+data:
+  # Logging
+  log-level: "info"
+  enable-request-logging: "true"
+
+  # Firebase (non-sensitive)
+  firebase-project-id: "your-firebase-project-id"
+
+  # Redis configuration
+  redis-host: "redis-service"  # or external Redis host
+  redis-port: "6379"
+  redis-tls: "false"
+
+  # Queue configuration
+  queue-concurrency: "3"
+  queue-max-retries: "3"
+
+  # Timeout configuration
+  agent-timeout-ms: "120000"    # 2 minutes
+  request-timeout-ms: "150000"  # 2.5 minutes
