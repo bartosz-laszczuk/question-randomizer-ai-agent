@@ -15,7 +15,12 @@
       "Bash(dotnet build:*)",
       "Bash(git remote:*)",
       "Bash(git push:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(powershell -Command \"(Get-Content ''C:\\D\\Repositories\\question-randomizer-ai-agent\\CLAUDE.md'').Count\")",
+      "Bash(powershell -Command \"(Get-Content ''C:\\D\\Repositories\\question-randomizer-ai-agent\\docs\\CONFIGURATION.md'').Count\")",
+      "Bash(powershell -Command \"(Get-Content ''C:\\D\\Repositories\\question-randomizer-ai-agent\\docs\\ARCHITECTURE.md'').Count\")",
+      "Bash(powershell -Command \"(Get-Content ''C:\\D\\Repositories\\question-randomizer-ai-agent\\docs\\COMMANDS.md'').Count\")",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []
